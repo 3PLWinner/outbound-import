@@ -4,7 +4,7 @@ from io import StringIO
 
 def process_csv(file):
     # Read the CSV file
-    df = pd.read_csv(file)
+     df = pd.read_csv(file, encoding='utf-8-sig')
     
     # Convert Planned Shipped Date from yyyymmdd to mm/dd/yyyy
     df['Planned Ship Date'] = pd.to_datetime(df['Planned Ship Date'], format='%Y%m%d').dt.strftime('%m/%d/%Y')
@@ -37,6 +37,9 @@ def process_csv(file):
     df = df[['Delivery Number', 'Company Name/Contact Name', 'Address 1', 'Address 2', 'Address 3',
              'City', 'State', 'Postal Code', 'Country', 'Product ID', 'Quantity', 'Sales Order',
              'Shipping Conditions', 'Delivery Instructions', 'Carrier', 'Planned Ship Date']]
+
+    # Remove pandas index
+    df = df.set_index('Delivery Number')
     
     return df
 
@@ -56,7 +59,7 @@ def main():
         
         # Provide a download button for the processed CSV without an index
         csv_buffer = StringIO()
-        processed_df.to_csv(csv_buffer, encoding='utf-8', index=False)  # Remove the index
+        processed_df.to_csv(csv_buffer, encoding='utf-8')
         csv_data = csv_buffer.getvalue()
 
         st.download_button(
